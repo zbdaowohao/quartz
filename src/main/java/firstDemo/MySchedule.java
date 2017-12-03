@@ -16,35 +16,39 @@ public class MySchedule {
 
 	public static void main(String[] args) {
 		/**
-		 * JobDetailÎªJobÊµÀıÌá¹©¶àÖÖÉèÖÃÊôĞÔ£¬ÒÔ¼°JobDataMap³ÉÔ±±äÁ¿ÊôĞÔ£¬
-		 * ËüÓÃÀ´´æÔÚÌØ¶¨JobÊµÀıµÄ×´Ì¬ĞÅÏ¢£¬µ÷¶ÈÆ÷ĞèÒª½èÖúJobDetail¶ÔÏóÀ´Ìí¼ÓJobÊµÀı¡£
-		 * name:ÈÎÎñµÄÃû³Æ
-		 * group:ÈÎÎñËùÔÚµÄ×é£¨²»´«ÈëÄ¬ÈÏDEFAULT£© 
-		 * jobClass:ÈÎÎñµÄÊµÏÖÀà 
-		 * jobDataMap:ÓÃÀ´´«²ÎÊ¹ÓÃ
+		 * JobDetailä¸ºJobå®ä¾‹æä¾›å¤šç§è®¾ç½®å±æ€§ï¼Œä»¥åŠJobDataMapæˆå‘˜å˜é‡å±æ€§ï¼Œ
+		 * å®ƒç”¨æ¥å­˜åœ¨ç‰¹å®šJobå®ä¾‹çš„çŠ¶æ€ä¿¡æ¯ï¼Œè°ƒåº¦å™¨éœ€è¦å€ŸåŠ©JobDetailå¯¹è±¡æ¥æ·»åŠ Jobå®ä¾‹ã€‚
+		 * name:ä»»åŠ¡çš„åç§°
+		 * group:ä»»åŠ¡æ‰€åœ¨çš„ç»„ï¼ˆä¸ä¼ å…¥é»˜è®¤DEFAULTï¼‰ 
+		 * jobClass:ä»»åŠ¡çš„å®ç°ç±» 
+		 * jobDataMap:ç”¨æ¥ä¼ å‚ä½¿ç”¨
 		 */
-		// ´´½¨Ò»¸öJovDetailÊµÀı£¬½«¸ÃÊµÀıÓëJob½øĞĞ°ó¶¨
+		// åˆ›å»ºä¸€ä¸ªJovDetailå®ä¾‹ï¼Œå°†è¯¥å®ä¾‹ä¸Jobè¿›è¡Œç»‘å®š
 		JobDetail jobDetail = JobBuilder.newJob(MyJob.class)
-				.withIdentity("myJob", "group1").build();
+				.withIdentity("myJob", "group1")
+				.usingJobData("myJobDataMap1", "myJobDataMap1")
+				.usingJobData("myJobDataMap2", 2).build();
 		System.out.println("jobDetail`s name: " + jobDetail.getKey().getName());
 		System.out.println("jobDetail`s group: " + jobDetail.getKey().getGroup());
 		System.out.println("jobDetail`s jobClass: " + jobDetail.getJobClass().getName());
 		
-		// ´´½¨Ò»¸öTriggerÊµÀı£¬¶¨Òå¸ÃJobÖ´ĞĞ¹æÔò(Á¢¼´Ö´ĞĞ£¬ÆäÃ¿¸ô2sÖØ¸´Ö´ĞĞ)
+		// åˆ›å»ºä¸€ä¸ªTriggerå®ä¾‹ï¼Œå®šä¹‰è¯¥Jobæ‰§è¡Œè§„åˆ™(ç«‹å³æ‰§è¡Œï¼Œå…¶æ¯éš”2sé‡å¤æ‰§è¡Œ)
 		Trigger trigger = TriggerBuilder
 				.newTrigger()
 				.withIdentity("myTrigger", "group1")
+				.usingJobData("myJobDataMap3", 3.14F)
+				.usingJobData("myJobDataMap4", 1000L)
 				.startNow()
 				.withSchedule(
 						SimpleScheduleBuilder.simpleSchedule()
 								.withIntervalInSeconds(2).repeatForever())
 				.build();
-		// ´´½¨ScheduleÊµÀı
+		// åˆ›å»ºScheduleå®ä¾‹
 		SchedulerFactory sf = new StdSchedulerFactory();
 		try {
-			// Í¨¹ıÌá¹©µÄÒ»¸ö¹¤³§»ñÈ¡SchedulerÊµÀı
+			// é€šè¿‡æä¾›çš„ä¸€ä¸ªå·¥å‚è·å–Schedulerå®ä¾‹
 			Scheduler scheduler = sf.getScheduler();
-			// ¿ªÊ¼Ö´ĞĞ
+			// å¼€å§‹æ‰§è¡Œ
 			scheduler.start();
 			System.out.println("Start time is: "
 					+ CommonUtil.getCurrentTime());

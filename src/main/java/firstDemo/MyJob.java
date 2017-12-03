@@ -3,23 +3,99 @@ package firstDemo;
 import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.quartz.JobKey;
+import org.quartz.TriggerKey;
 
 import quartz.utils.CommonUtil;
 
 /**
- * Ã¿´ÎScheduleÖ´ĞĞjobÊ±£¬ËûÔÚµ÷ÓÃexecute·½·¨Ç°»á´´½¨Ò»¸öĞÂµÄjobÊµÀı£¬
- * ½«JobExecutionContext´«µİ¸øJobµÄexecute()·½·¨£¬JobÄÜ¹»Í¨¹ı
- * JobExecutionContext¶ÔÏó·ÃÎÊµ½QuartzÔËĞĞÊ±µÄ»·¾³ÒÔ¼°Job±¾ÉíµÄÊı¾İÃ÷Ï¸£¬
- * µ±µ÷ÓÃÍê³Éºó£¬¹ØÁªµ½job¶ÔÏóÊµÀı»á±»ÊÍ·Å£¬ÊÍ·ÅÊµÀı»á±»À¬»ø»ØÊÕ»úÖÆ»ØÊÕ¡£
+ * æ¯æ¬¡Scheduleæ‰§è¡Œjobæ—¶ï¼Œä»–åœ¨è°ƒç”¨executeæ–¹æ³•å‰ä¼šåˆ›å»ºä¸€ä¸ªæ–°çš„jobå®ä¾‹ï¼Œ
+ * å°†JobExecutionContextä¼ é€’ç»™Jobçš„execute()æ–¹æ³•ï¼ŒJobèƒ½å¤Ÿé€šè¿‡
+ * JobExecutionContextå¯¹è±¡è®¿é—®åˆ°Quartzè¿è¡Œæ—¶çš„ç¯å¢ƒä»¥åŠJobæœ¬èº«çš„æ•°æ®æ˜ç»†ï¼Œ
+ * å½“è°ƒç”¨å®Œæˆåï¼Œå…³è”åˆ°jobå¯¹è±¡å®ä¾‹ä¼šè¢«é‡Šæ”¾ï¼Œé‡Šæ”¾å®ä¾‹ä¼šè¢«åƒåœ¾å›æ”¶æœºåˆ¶å›æ”¶ã€‚
  */
 public class MyJob implements Job {
+	
+	/**
+	 * JobDataMapå¯ä»¥é€šè¿‡getã€setæ–¹æ³•è¿›è¡Œè®¾ç½®,
+	 * å±æ€§å€¼=mapçš„keyå³å¯
+	 */
+	private String myJobDataMap1;
+	
+	private int myJobDataMap2;
+	
+	private Float myJobDataMap3;
+	
+	private Long myJobDataMap4;
 
-	// Context JobÖ´ĞĞµÄÉÏÏÂÎÄ
-	public void execute(JobExecutionContext Context)
+	// Context Jobæ‰§è¡Œçš„ä¸Šä¸‹æ–‡
+	public void execute(JobExecutionContext context)
 			throws JobExecutionException {
-		// ±àĞ´¾ßÌåµÄÒµÎñÂß¼­
+		/**
+		 * JobDataMap:åœ¨ä»»åŠ¡è°ƒåº¦æ—¶JobDataMapå­˜å‚¨åœ¨JobExecutionContextä¸­,
+		 * JobDataMapå¯ä»¥ç”¨æ¥è£…è½½ä»»ä½•å¯åºåˆ—åŒ–çš„æ•°æ®å¯¹è±¡,å½“jobå®ä¾‹å¯¹è±¡è¢«æ‰§è¡Œæ—¶è¿™äº›å‚æ•°å¯¹è±¡ä¼šä¼ é€’ç»™ä»–,
+		 * JobDataMapå®ç°äº†JDKçš„Mapæ¥å£ï¼Œå¹¶ä¸”æ·»åŠ ä¸€äº›éå¸¸æ–¹ä¾¿çš„æ–¹ç”¨å­˜å–åŸºæœ¬æ•°æ®ç±»å‹ã€‚
+		 */
+		
+		// ç¼–å†™å…·ä½“çš„ä¸šåŠ¡é€»è¾‘
 		System.out.println("Current time is: " + CommonUtil.getCurrentTime());
-		System.out.println("Hello World");
+		JobKey jobKey = context.getJobDetail().getKey();
+		System.out.println("My job name is : " + jobKey.getName() + " , my group is : " + jobKey.getGroup());
+		TriggerKey triggerKey = context.getTrigger().getKey();
+		System.out.println("My trigger name is : " + triggerKey.getName() + " , my group is : " + triggerKey.getGroup());
+		
+		/**
+		 * getMergedJobDataMapæ˜¯å°†äºŒè€…çš„mapè¿›è¡Œåˆå¹¶,
+		 * å¯é€šè¿‡keyè·å–JobDetailã€Triggerä¸­çš„value,
+		 * å¦‚æœäºŒè€…çš„keyä¸€æ ·åˆ™Triggerçš„valueä¼šè¦†ç›–JobDetailçš„value
+		 */
+		/*JobDataMap dataMap = context.getMergedJobDataMap();
+		System.out.println("dataMapInt: "+dataMap.getLong("myJobDataMap2"));
+		System.out.println("dataMapLong: "+dataMap.getLong("myJobDataMap4"));
+		
+		JobDataMap jobDataMap = context.getJobDetail().getJobDataMap();
+		String myJobDataMap1 = jobDataMap.getString("myJobDataMap1");
+		int myJobDataMap2 = jobDataMap.getInt("myJobDataMap2");
+		
+		JobDataMap triggerDataMap = context.getTrigger().getJobDataMap();
+		Float myJobDataMap3 = triggerDataMap.getFloat("myJobDataMap3");
+		Long myJobDataMap4 = triggerDataMap.getLong("myJobDataMap4");
+		
+		System.out.println(myJobDataMap1 + myJobDataMap2 + myJobDataMap3 + myJobDataMap4);*/
+		
+		System.out.println(myJobDataMap1 + myJobDataMap2 + myJobDataMap3 + myJobDataMap4);
 	}
 
+	public String getMyJobDataMap1() {
+		return myJobDataMap1;
+	}
+
+	public void setMyJobDataMap1(String myJobDataMap1) {
+		this.myJobDataMap1 = myJobDataMap1;
+	}
+
+	public int getMyJobDataMap2() {
+		return myJobDataMap2;
+	}
+
+	public void setMyJobDataMap2(int myJobDataMap2) {
+		this.myJobDataMap2 = myJobDataMap2;
+	}
+
+	public Float getMyJobDataMap3() {
+		return myJobDataMap3;
+	}
+
+	public void setMyJobDataMap3(Float myJobDataMap3) {
+		this.myJobDataMap3 = myJobDataMap3;
+	}
+
+	public Long getMyJobDataMap4() {
+		return myJobDataMap4;
+	}
+
+	public void setMyJobDataMap4(Long myJobDataMap4) {
+		this.myJobDataMap4 = myJobDataMap4;
+	}
+	
 }
