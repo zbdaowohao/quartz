@@ -4,6 +4,7 @@ import org.quartz.Job;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.JobKey;
+import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 
 import quartz.utils.CommonUtil;
@@ -64,6 +65,10 @@ public class MyJob implements Job {
 		System.out.println(myJobDataMap1 + myJobDataMap2 + myJobDataMap3 + myJobDataMap4);*/
 		
 		System.out.println(myJobDataMap1 + myJobDataMap2 + myJobDataMap3 + myJobDataMap4);
+		
+		Trigger currenTrigger = context.getTrigger();
+		System.out.println("Start time is : " + CommonUtil.formatTime(currenTrigger.getStartTime()));
+		System.out.println("End time is : " + CommonUtil.formatTime(currenTrigger.getEndTime()));
 	}
 
 	public String getMyJobDataMap1() {
